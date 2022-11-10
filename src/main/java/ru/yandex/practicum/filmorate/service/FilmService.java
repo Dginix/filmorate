@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class FilmService {
 
     private final Storage<Film> filmStorage;
@@ -19,30 +21,32 @@ public class FilmService {
         this.filmStorage = filmStorage;
     }
 
-    public void addLike(Long filmId, Long userId) {
-        filmStorage.get(filmId).getLikes().add(userId);
+    public boolean addLike(Long filmId, Long userId) {
+        return filmStorage.get(filmId).getLikes().add(userId);
     }
 
-    public void removeLike(Long filmId, Long userId) {
-        filmStorage.get(filmId).getLikes().remove(userId);
+    public boolean removeLike(Long filmId, Long userId) {
+        return filmStorage.get(filmId).getLikes().remove(userId);
     }
 
-    public List<Film> getTop10FilmsByUserLikes() {
+    public List<Film> getTopFilmsByUserLikes(Long count) {
         return filmStorage.getAll().stream()
                 .sorted((Comparator.comparingInt(o -> o.getLikes().size())))
-                .limit(10)
+                .limit(count)
                 .collect(Collectors.toList());
     }
 
     public Film addFilm(Film film) {
-        return filmStorage.add(film);
+        Film result = filmStorage.add(film);
+        log.debug("from service: " + result.toString());
+        return result;
     }
 
-    public Film getFilmById(Film film) {
-        return filmStorage.get(film.getId());
+    public Film getFilmById(Long id) {
+        return filmStorage.get(id);
     }
 
-    public List<Film> getAllFilm(Film film) {
+    public List<Film> getAllFilms() {
         return filmStorage.getAll();
     }
 }

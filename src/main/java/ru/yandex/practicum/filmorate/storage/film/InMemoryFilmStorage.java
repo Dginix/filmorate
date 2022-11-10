@@ -17,7 +17,8 @@ public class InMemoryFilmStorage implements Storage<Film> {
 
     @Override
     public Film add(Film film) {
-        return films.put(film.getId(), film);
+        films.put(film.getId(), film);
+        return film;
     }
 
     @Override
