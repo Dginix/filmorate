@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class User {
-    @NotNull
+    @NotNull(message = "id cant be empty")
     private long id;
     @Email(message = "email not valid")
     private String email;

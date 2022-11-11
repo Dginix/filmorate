@@ -42,7 +42,7 @@ public class InMemoryFilmStorage implements Storage<Film> {
     }
 
     @Override
-    public boolean isContain(Long id) {
+    public boolean isContains(Long id) {
         return films.containsKey(id);
     }
 

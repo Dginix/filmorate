@@ -48,14 +48,14 @@ public class FilmService {
 
     public Film updateFilm(Film film) {
         validateFilmFields(film);
-        if (!filmStorage.isContain(film.getId())) {
+        if (!filmStorage.isContains(film.getId())) {
             throw new NotFoundException("film not found");
         }
         return filmStorage.update(film);
     }
 
     public Film getFilmById(Long id) {
-        if (!filmStorage.isContain(id)) {
+        if (!filmStorage.isContains(id)) {
             throw new NotFoundException("film not found");
         }
         return filmStorage.get(id);

@@ -7,6 +7,6 @@ public interface Storage<T> {
     T update(T t);
     T delete(Long id);
     T get(Long id);
-    boolean isContain(Long id);
+    boolean isContains(Long id);
     List<T> getAll();
 }
