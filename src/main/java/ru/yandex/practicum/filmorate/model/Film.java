@@ -11,7 +11,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Film {
+
     @NotNull(message = "id cant be empty")
+    @Positive(message = "id cant be less then zero or equal")
     private long id;
 
     @NotBlank(message = "name cant be blank")
@@ -28,5 +30,5 @@ public class Film {
     private int duration;
 
     @EqualsAndHashCode.Exclude
-    private Set<Long> likes = new HashSet<>();
+    private Set<Long> likes;
 }

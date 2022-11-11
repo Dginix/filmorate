@@ -38,7 +38,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
         return new ErrorResponse(
-                "unexpected error"
+                "unexpected error" + e.getMessage()
         );
     }
 }
