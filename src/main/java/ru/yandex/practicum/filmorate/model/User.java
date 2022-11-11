@@ -30,5 +30,5 @@ public class User {
     private LocalDate birthday;
 
     @EqualsAndHashCode.Exclude
-    Set<Long> friends;
+    private Set<Long> friends;
 }

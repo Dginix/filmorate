@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.Storage;
 
@@ -41,6 +40,13 @@ public class UserService {
         return userStorage.getAll();
     }
 
+    public List<User> getAllFriends(Long userId) {
+        return userStorage.getAll().stream()
+                .filter(user -> user.getFriends().stream()
+                        .anyMatch(friend -> friend.equals(userId)))
+                .collect(Collectors.toList());
+    }
+
     public void addToFriendsList(Long userId, Long friendId) {
 
         if (!userStorage.isContains(userId)) {
@@ -51,15 +57,11 @@ public class UserService {
             throw new NotFoundException("user friend not found");
         }
 
-        if (userStorage.get(userId).getFriends().stream()
-                .filter(aLong -> aLong==friendId)
-                .count() == 0) {
+        if (!userStorage.get(userId).getFriends().contains(friendId)) {
             userStorage.get(userId).getFriends().add(friendId);
         }
 
-        if (userStorage.get(friendId).getFriends().stream()
-                .filter(aLong -> aLong==userId)
-                .count() == 0) {
+        if (!userStorage.get(friendId).getFriends().contains(userId)) {
             userStorage.get(friendId).getFriends().add(userId);
         }
     }
@@ -74,20 +76,16 @@ public class UserService {
             throw new NotFoundException("user friend not found");
         }
 
-        if (userStorage.get(userId).getFriends().stream()
-                .filter(aLong -> aLong==friendId)
-                .count() == 0) {
+        if (userStorage.get(userId).getFriends().contains(friendId)) {
             userStorage.get(userId).getFriends().remove(friendId);
         }
 
-        if (userStorage.get(friendId).getFriends().stream()
-                .filter(aLong -> aLong==userId)
-                .count() == 0) {
+        if (userStorage.get(friendId).getFriends().contains(userId)) {
             userStorage.get(friendId).getFriends().remove(userId);
         }
     }
 
-    public List<Long> getCommonFriends(Long userId, Long friendId) {
+    public List<User> getCommonFriends(Long userId, Long friendId) {
 
         if (!userStorage.isContains(userId)) {
             throw new NotFoundException("user not found");
@@ -97,9 +95,14 @@ public class UserService {
             throw new NotFoundException("user friend not found");
         }
 
-        return userStorage.get(userId).getFriends().stream()
+        List<Long> friendsIds =  userStorage.get(userId).getFriends().stream()
                 .distinct()
                 .filter(userStorage.get(friendId).getFriends()::contains)
+                .collect(Collectors.toList());
+
+        return userStorage.getAll().stream()
+                .filter(user -> friendsIds.stream()
+                        .anyMatch(id -> id.equals(user.getId())))
                 .collect(Collectors.toList());
     }
 }

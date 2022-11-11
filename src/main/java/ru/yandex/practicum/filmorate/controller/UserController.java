@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -15,28 +17,51 @@ import java.util.Map;
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-    Map<Long, User> users = new HashMap<>();
 
-    @PostMapping()
-    public User addUser(@Valid @RequestBody User user) {
-        if(user.getLogin().contains(" ")) {
-            log.warn(user.getLogin());
-            throw new ValidationException("Login can't contain any spaces");
-        }
-        log.debug(user.toString());
-        users.put(user.getId(), user);
-        return user;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @PutMapping()
+    @PostMapping
+    public User addUser(@Valid @RequestBody User user) {
+        return userService.addUser(user);
+    }
+
+    @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        users.put(user.getId(), user);
-        log.debug(user.toString());
-        return user;
+        return userService.updateUser(user);
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
     }
 
     @GetMapping()
     public List<User> getAllUsers() {
-        return users.values().stream().toList();
+        return userService.getAllUsers();
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.addToFriendsList(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.removeFromFriendsList(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable Long id) {
+        return userService.getAllFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return userService.getCommonFriends(id, otherId);
     }
 }

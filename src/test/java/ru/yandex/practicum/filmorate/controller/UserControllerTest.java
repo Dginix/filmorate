@@ -12,33 +12,5 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserControllerTest {
 
-    private final UserController userController = new UserController();
-
-    @Test
-    public void addUser_LoginHaveSpacesValidationTest() {
-        User user = User.builder()
-                .id(1)
-                .login("dfdfdf fgr4rg")
-                .email("gdsadad@efef.com")
-                .name("John")
-                .birthday(LocalDate.of(1995, 1, 2))
-                .build();
-
-        assertThrows(ValidationException.class, () -> userController.addUser(user));
-    }
-
-    @Test
-    public void addUser_LoginHaveNotSpacesValidationTest() {
-        User user = User.builder()
-                .id(1)
-                .login("dfdfdf_fgr4rg")
-                .email("gdsadad@efef.com")
-                .name("John")
-                .birthday(LocalDate.of(1995, 1, 2))
-                .build();
-
-        assertDoesNotThrow(() -> userController.addUser(user));
-    }
-
 
 }

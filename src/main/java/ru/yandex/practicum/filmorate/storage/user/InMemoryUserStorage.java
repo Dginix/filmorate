@@ -16,12 +16,19 @@ public class InMemoryUserStorage implements Storage<User> {
 
     @Override
     public User add(User user) {
-        return users.put(user.getId(), user);
+        users.put(user.getId(), user);
+        return user;
     }
 
     @Override
     public User update(User user) {
-        return users.put(user.getId(), user);
+        User storageUser = users.get(user.getId());
+        storageUser.setName(user.getName());
+        storageUser.setId(user.getId());
+        storageUser.setBirthday(user.getBirthday());
+        storageUser.setLogin(user.getLogin());
+        storageUser.setEmail(user.getEmail());
+        return storageUser;
     }
 
     @Override
