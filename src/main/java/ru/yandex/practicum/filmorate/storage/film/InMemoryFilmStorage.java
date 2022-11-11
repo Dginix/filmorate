@@ -23,7 +23,12 @@ public class InMemoryFilmStorage implements Storage<Film> {
 
     @Override
     public Film update(Film film) {
-        return films.put(film.getId(), film);
+        Film storageFilm = films.get(film.getId());
+        storageFilm.setName(film.getName());
+        storageFilm.setDuration(film.getDuration());
+        storageFilm.setReleaseDate(film.getReleaseDate());
+        storageFilm.setDescription(film.getDescription());
+        return storageFilm;
     }
 
     @Override
@@ -34,6 +39,11 @@ public class InMemoryFilmStorage implements Storage<Film> {
     @Override
     public Film get(Long id) {
         return films.get(id);
+    }
+
+    @Override
+    public boolean isContain(Long id) {
+        return films.containsKey(id);
     }
 
     @Override

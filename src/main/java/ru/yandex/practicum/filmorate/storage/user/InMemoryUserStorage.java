@@ -35,6 +35,11 @@ public class InMemoryUserStorage implements Storage<User> {
     }
 
     @Override
+    public boolean isContain(Long id) {
+        return users.containsKey(id);
+    }
+
+    @Override
     public List<User> getAll() {
         return users.values().stream().toList();
     }

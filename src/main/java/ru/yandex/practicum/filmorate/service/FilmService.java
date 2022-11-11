@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.Storage;
@@ -40,12 +41,23 @@ public class FilmService {
     }
 
     public Film addFilm(Film film) {
-        validateFilm(film);
+        validateFilmFields(film);
         Film result = filmStorage.add(film);
         return result;
     }
 
+    public Film updateFilm(Film film) {
+        validateFilmFields(film);
+        if (!filmStorage.isContain(film.getId())) {
+            throw new NotFoundException("film not found");
+        }
+        return filmStorage.update(film);
+    }
+
     public Film getFilmById(Long id) {
+        if (!filmStorage.isContain(id)) {
+            throw new NotFoundException("film not found");
+        }
         return filmStorage.get(id);
     }
 
@@ -53,7 +65,7 @@ public class FilmService {
         return filmStorage.getAll();
     }
 
-    public void validateFilm(Film film) {
+    public void validateFilmFields(Film film) {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))) {
             throw new ValidationException("release date cant be before 28.12.1895");
         }
