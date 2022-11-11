@@ -57,8 +57,5 @@ public class FilmService {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))) {
             throw new ValidationException("release date cant be before 28.12.1895");
         }
-        if (film.getDuration() <= 0) {
-            throw new ValidationException("duration cant be equal or less then zero");
-        }
     }
 }

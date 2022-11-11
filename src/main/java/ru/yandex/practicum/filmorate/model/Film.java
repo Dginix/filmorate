@@ -11,19 +11,19 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Film {
-    @NotNull
+    @NotNull(message = "id cant be empty")
     private long id;
 
-    @NotBlank
+    @NotBlank(message = "name cant be blank")
     private String name;
 
-    @Size(max = 200)
+    @Size(max = 200, message = "max size for description is 200")
     @EqualsAndHashCode.Exclude
     private String description;
 
     private LocalDate releaseDate;
 
-    @Positive
+    @Positive(message = "duration cant be less then zero")
     @EqualsAndHashCode.Exclude
     private int duration;
 
