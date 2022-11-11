@@ -42,6 +42,7 @@ public class UserService {
     }
 
     public void addToFriendsList(Long userId, Long friendId) {
+
         if (!userStorage.isContains(userId)) {
             throw new NotFoundException("user not found");
         }
@@ -64,6 +65,7 @@ public class UserService {
     }
 
     public void removeFromFriendsList(Long userId, Long friendId) {
+
         if (!userStorage.isContains(userId)) {
             throw new NotFoundException("user not found");
         }
@@ -86,6 +88,15 @@ public class UserService {
     }
 
     public List<Long> getCommonFriends(Long userId, Long friendId) {
+
+        if (!userStorage.isContains(userId)) {
+            throw new NotFoundException("user not found");
+        }
+
+        if (!userStorage.isContains(friendId)) {
+            throw new NotFoundException("user friend not found");
+        }
+
         return userStorage.get(userId).getFriends().stream()
                 .distinct()
                 .filter(userStorage.get(friendId).getFriends()::contains)
