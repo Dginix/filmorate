@@ -30,4 +30,10 @@ public class Film {
 
     @EqualsAndHashCode.Exclude
     private Set<Long> likes;
+
+    @EqualsAndHashCode.Exclude
+    private int MPA_id;
+
+    @EqualsAndHashCode.Exclude
+    private Set<Long> Genres;
 }
