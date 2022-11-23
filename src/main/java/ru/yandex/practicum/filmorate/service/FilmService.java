@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.interfaces.Storage;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.dao.Storage;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -19,18 +20,34 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final Storage<Film> filmStorage;
+    private final Storage<User> userStorage;
 
     @Autowired
-    public FilmService(Storage<Film> filmStorage) {
+    public FilmService(Storage<Film> filmStorage, Storage<User> userStorage) {
         this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
-    public boolean addLike(Long filmId, Long userId) {
-        return filmStorage.get(filmId).getLikes().add(userId);
+    public void addLike(Long filmId, Long userId) {
+        if (!userStorage.isContains(userId)) {
+            throw new NotFoundException("user not found");
+        }
+
+        filmStorage.get(filmId).ifPresentOrElse(
+                film -> film.getLikes().add(userId),
+                () -> {
+                    throw new NotFoundException("film not found");
+                }
+        );
     }
 
-    public boolean removeLike(Long filmId, Long userId) {
-        return filmStorage.get(filmId).getLikes().remove(userId);
+    public void removeLike(Long filmId, Long userId) {
+        filmStorage.get(filmId).ifPresentOrElse(
+                film -> film.getLikes().remove(userId),
+                () -> {
+                    throw new NotFoundException("film not found");
+                }
+        );
     }
 
     public List<Film> getTopFilmsByUserLikes(Long count) {
@@ -42,7 +59,7 @@ public class FilmService {
 
     public Film addFilm(Film film) {
         validateFilmFields(film);
-        return filmStorage.add(film);
+        return filmStorage.add(film).get();
     }
 
     public Film updateFilm(Film film) {
@@ -50,14 +67,13 @@ public class FilmService {
         if (!filmStorage.isContains(film.getId())) {
             throw new NotFoundException("film not found");
         }
-        return filmStorage.update(film);
+        return filmStorage.update(film).get();
     }
 
     public Film getFilmById(Long id) {
-        if (!filmStorage.isContains(id)) {
+        return filmStorage.get(id).orElseGet(() -> {
             throw new NotFoundException("film not found");
-        }
-        return filmStorage.get(id);
+        });
     }
 
     public List<Film> getAllFilms() {

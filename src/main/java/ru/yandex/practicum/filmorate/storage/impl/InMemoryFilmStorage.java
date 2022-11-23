@@ -1,14 +1,14 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.interfaces.Storage;
+import ru.yandex.practicum.filmorate.storage.dao.Storage;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -16,29 +16,29 @@ public class InMemoryFilmStorage implements Storage<Film> {
     private final Map<Long, Film> films = new HashMap<>();
 
     @Override
-    public Film add(Film film) {
+    public Optional<Film> add(Film film) {
         films.put(film.getId(), film);
-        return film;
+        return Optional.ofNullable(film);
     }
 
     @Override
-    public Film update(Film film) {
+    public Optional<Film> update(Film film) {
         Film storageFilm = films.get(film.getId());
         storageFilm.setName(film.getName());
         storageFilm.setDuration(film.getDuration());
         storageFilm.setReleaseDate(film.getReleaseDate());
         storageFilm.setDescription(film.getDescription());
-        return storageFilm;
+        return Optional.ofNullable(storageFilm);
     }
 
     @Override
-    public Film delete(Long id) {
-        return films.remove(id);
+    public Optional<Film> delete(Long id) {
+        return Optional.ofNullable(films.remove(id));
     }
 
     @Override
-    public Film get(Long id) {
-        return films.get(id);
+    public Optional<Film> get(Long id) {
+        return Optional.ofNullable(films.get(id));
     }
 
     @Override

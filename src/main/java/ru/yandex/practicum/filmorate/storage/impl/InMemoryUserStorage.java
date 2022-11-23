@@ -1,13 +1,14 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.interfaces.Storage;
+import ru.yandex.practicum.filmorate.storage.dao.Storage;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -15,30 +16,30 @@ public class InMemoryUserStorage implements Storage<User> {
     private final Map<Long, User> users = new HashMap<>();
 
     @Override
-    public User add(User user) {
+    public Optional<User> add(User user) {
         users.put(user.getId(), user);
-        return user;
+        return Optional.ofNullable(user);
     }
 
     @Override
-    public User update(User user) {
+    public Optional<User> update(User user) {
         User storageUser = users.get(user.getId());
         storageUser.setName(user.getName());
         storageUser.setId(user.getId());
         storageUser.setBirthday(user.getBirthday());
         storageUser.setLogin(user.getLogin());
         storageUser.setEmail(user.getEmail());
-        return storageUser;
+        return Optional.ofNullable(storageUser);
     }
 
     @Override
-    public User delete(Long id) {
-        return users.remove(id);
+    public Optional<User> delete(Long id) {
+        return Optional.ofNullable(users.remove(id));
     }
 
     @Override
-    public User get(Long id) {
-        return users.get(id);
+    public Optional<User> get(Long id) {
+        return Optional.ofNullable(users.get(id));
     }
 
     @Override
