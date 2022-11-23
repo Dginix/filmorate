@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
-<<<<<<< HEAD
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
@@ -12,7 +11,4 @@ public interface FriendStatusDao {
     void addFriend(long userId, long friendId);
     void removeFriend(long userId, long friendId);
     Optional<Boolean> checkStatus(long userId, long friendId);
-=======
-public interface FriendStatusDao {
->>>>>>> origin/add-database
 }
