@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dao.Storage;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,9 +34,7 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userStorage.get(id).orElseGet(() -> {
-           throw new NotFoundException("user not found");
-        });
+        return userStorage.get(id).orElseThrow(() -> new NotFoundException("user not found"));
     }
 
     public List<User> getAllUsers() {
