@@ -5,7 +5,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserDAO {
+public interface UserDao {
 
     Optional<User> add(User t);
     Optional<User> update(User t);

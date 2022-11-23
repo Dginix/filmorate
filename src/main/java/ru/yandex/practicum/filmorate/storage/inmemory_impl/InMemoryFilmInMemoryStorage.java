@@ -1,9 +1,10 @@
 package ru.yandex.practicum.filmorate.storage.inmemory_impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.dao.FilmDAO;
+import ru.yandex.practicum.filmorate.storage.dao.FilmDao;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,8 @@ import java.util.Optional;
 
 @Component
 @Slf4j
-public class InMemoryFilmInMemoryStorage implements FilmDAO {
+@Qualifier("collectionStorage")
+public class InMemoryFilmInMemoryStorage implements FilmDao {
     private final Map<Long, Film> films = new HashMap<>();
 
     @Override

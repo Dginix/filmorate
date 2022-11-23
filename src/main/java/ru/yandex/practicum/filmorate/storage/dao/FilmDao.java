@@ -5,7 +5,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.List;
 import java.util.Optional;
 
-public interface FilmDAO {
+public interface FilmDao {
     Optional<Film> add(Film t);
     Optional<Film> update(Film t);
     Optional<Film> delete(Long id);

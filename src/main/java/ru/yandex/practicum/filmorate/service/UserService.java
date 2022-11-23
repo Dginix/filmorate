@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.dao.UserDAO;
+import ru.yandex.practicum.filmorate.storage.dao.UserDao;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserService {
 
-    private final UserDAO userInMemoryStorage;
+    private final UserDao userInMemoryStorage;
 
     @Autowired
-    public UserService(UserDAO userInMemoryStorage) {
+    public UserService(UserDao userInMemoryStorage) {
         this.userInMemoryStorage = userInMemoryStorage;
     }
 
@@ -48,13 +48,11 @@ public class UserService {
     }
 
     public void addToFriendsList(Long userId, Long friendId) {
-        userInMemoryStorage.get(userId).orElseGet(() -> {
-            throw new NotFoundException("user not found");
-        }).getFriends().add(friendId);
+        userInMemoryStorage.get(userId).orElseThrow(() -> new NotFoundException("user not found"))
+                .getFriends().add(friendId);
 
-        userInMemoryStorage.get(friendId).orElseGet(() -> {
-            throw new NotFoundException("user friend not found");
-        }).getFriends().add(userId);
+        userInMemoryStorage.get(friendId).orElseThrow(() -> new NotFoundException("user friend not found")).
+                getFriends().add(userId);
     }
 
     public void removeFromFriendsList(Long userId, Long friendId) {

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.dao.FilmDAO;
-import ru.yandex.practicum.filmorate.storage.dao.UserDAO;
+import ru.yandex.practicum.filmorate.storage.dao.FilmDao;
+import ru.yandex.practicum.filmorate.storage.dao.UserDao;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
 
-    private final FilmDAO filmInMemoryStorage;
-    private final UserDAO userInMemoryStorage;
+    private final FilmDao filmInMemoryStorage;
+    private final UserDao userInMemoryStorage;
 
     @Autowired
-    public FilmService(FilmDAO filmInMemoryStorage, UserDAO userInMemoryStorage) {
+    public FilmService(FilmDao filmInMemoryStorage, UserDao userInMemoryStorage) {
         this.filmInMemoryStorage = filmInMemoryStorage;
         this.userInMemoryStorage = userInMemoryStorage;
     }
