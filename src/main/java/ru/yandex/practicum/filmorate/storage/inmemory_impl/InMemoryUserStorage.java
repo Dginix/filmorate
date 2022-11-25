@@ -14,7 +14,7 @@ import java.util.Optional;
 @Component
 @Slf4j
 @Qualifier("collectionStorage")
-public class InMemoryUserInMemoryStorage implements UserDao {
+public class InMemoryUserStorage implements UserDao {
     private final Map<Long, User> users = new HashMap<>();
 
     @Override

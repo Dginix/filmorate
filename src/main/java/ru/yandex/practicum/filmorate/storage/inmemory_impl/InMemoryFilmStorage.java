@@ -14,7 +14,7 @@ import java.util.Optional;
 @Component
 @Slf4j
 @Qualifier("collectionStorage")
-public class InMemoryFilmInMemoryStorage implements FilmDao {
+public class InMemoryFilmStorage implements FilmDao {
     private final Map<Long, Film> films = new HashMap<>();
 
     @Override
