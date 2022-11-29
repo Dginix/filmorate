@@ -32,7 +32,7 @@ public class Film {
     private Set<Long> likes;
 
     @EqualsAndHashCode.Exclude
-    private int MPA_id;
+    private int MpaId;
 
     @EqualsAndHashCode.Exclude
     private Set<Long> Genres;
