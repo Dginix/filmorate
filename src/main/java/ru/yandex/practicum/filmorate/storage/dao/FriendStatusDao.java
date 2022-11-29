@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface FriendStatusDao {
 
-    List<User> getAllUserFriends(long id);
     void addFriend(long userId, long friendId);
     void removeFriend(long userId, long friendId);
+    List<Long> getAllUserFriends(long userId);
     Optional<Boolean> checkStatus(long userId, long friendId);
 }
