@@ -35,8 +35,8 @@ public class InMemoryUserStorage implements UserDao {
     }
 
     @Override
-    public Optional<User> delete(Long id) {
-        return Optional.ofNullable(users.remove(id));
+    public void delete(Long id) {
+        users.remove(id);
     }
 
     @Override

@@ -34,8 +34,8 @@ public class InMemoryFilmStorage implements FilmDao {
     }
 
     @Override
-    public Optional<Film> delete(Long id) {
-        return Optional.ofNullable(films.remove(id));
+    public void delete(Long id) {
+        films.remove(id);
     }
 
     @Override
