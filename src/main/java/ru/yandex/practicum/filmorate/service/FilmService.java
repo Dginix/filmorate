@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -19,21 +20,21 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
 
-    private final FilmDao filmInMemoryStorage;
-    private final UserDao userInMemoryStorage;
+    private final FilmDao filmDao;
+    private final UserDao userDao;
 
     @Autowired
-    public FilmService(FilmDao filmInMemoryStorage, UserDao userInMemoryStorage) {
-        this.filmInMemoryStorage = filmInMemoryStorage;
-        this.userInMemoryStorage = userInMemoryStorage;
+    public FilmService(@Qualifier("dbStorage") FilmDao filmDao, @Qualifier("dbStorage") UserDao userDao) {
+        this.filmDao = filmDao;
+        this.userDao = userDao;
     }
 
     public void addLike(Long filmId, Long userId) {
-        if (!userInMemoryStorage.isContains(userId)) {
+        if (!userDao.isContains(userId)) {
             throw new NotFoundException("user not found");
         }
 
-        filmInMemoryStorage.get(filmId).ifPresentOrElse(
+        filmDao.get(filmId).ifPresentOrElse(
                 film -> film.getLikes().add(userId),
                 () -> {
                     throw new NotFoundException("film not found");
@@ -42,7 +43,11 @@ public class FilmService {
     }
 
     public void removeLike(Long filmId, Long userId) {
-        filmInMemoryStorage.get(filmId).ifPresentOrElse(
+        if (!userDao.isContains(userId)) {
+            throw new NotFoundException("user not found");
+        }
+
+        filmDao.get(filmId).ifPresentOrElse(
                 film -> film.getLikes().remove(userId),
                 () -> {
                     throw new NotFoundException("film not found");
@@ -51,7 +56,7 @@ public class FilmService {
     }
 
     public List<Film> getTopFilmsByUserLikes(Long count) {
-        return filmInMemoryStorage.getAll().stream()
+        return filmDao.getAll().stream()
                 .sorted((Comparator.comparingInt(o -> o.getLikes().size())))
                 .limit(count)
                 .collect(Collectors.toList());
@@ -59,25 +64,25 @@ public class FilmService {
 
     public Film addFilm(Film film) {
         validateFilmFields(film);
-        return filmInMemoryStorage.add(film).get();
+        return filmDao.add(film).get();
     }
 
     public Film updateFilm(Film film) {
         validateFilmFields(film);
-        if (!filmInMemoryStorage.isContains(film.getId())) {
+        if (!filmDao.isContains(film.getId())) {
             throw new NotFoundException("film not found");
         }
-        return filmInMemoryStorage.update(film).get();
+        return filmDao.update(film).get();
     }
 
     public Film getFilmById(Long id) {
-        return filmInMemoryStorage.get(id).orElseGet(() -> {
+        return filmDao.get(id).orElseGet(() -> {
             throw new NotFoundException("film not found");
         });
     }
 
     public List<Film> getAllFilms() {
-        return filmInMemoryStorage.getAll();
+        return filmDao.getAll().stream().toList();
     }
 
     public void validateFilmFields(Film film) {
