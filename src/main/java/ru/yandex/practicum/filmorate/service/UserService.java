@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -14,73 +15,73 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserService {
 
-    private final UserDao userInMemoryStorage;
+    private final UserDao userDao;
 
     @Autowired
-    public UserService(UserDao userInMemoryStorage) {
-        this.userInMemoryStorage = userInMemoryStorage;
+    public UserService(@Qualifier("dbStorage") UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public User addUser(User user) {
-        return userInMemoryStorage.add(user).get();
+        return userDao.add(user).get();
     }
 
     public User updateUser(User user) {
-        if (!userInMemoryStorage.isContains(user.getId())) {
+        if (!userDao.isContains(user.getId())) {
             throw new NotFoundException("user not found");
         }
-        return userInMemoryStorage.update(user).get();
+        return userDao.update(user).get();
     }
 
     public User getUserById(Long id) {
-        return userInMemoryStorage.get(id).orElseThrow(() -> new NotFoundException("user not found"));
+        return userDao.get(id).orElseThrow(() -> new NotFoundException("user not found"));
     }
 
     public List<User> getAllUsers() {
-        return userInMemoryStorage.getAll();
+        return userDao.getAll().stream().toList();
     }
 
     public List<User> getAllFriends(Long userId) {
-        return userInMemoryStorage.getAll().stream()
+        return userDao.getAll().stream()
                 .filter(user -> user.getFriends().stream()
                         .anyMatch(friend -> friend.equals(userId)))
                 .collect(Collectors.toList());
     }
 
     public void addToFriendsList(Long userId, Long friendId) {
-        userInMemoryStorage.get(userId).orElseThrow(() -> new NotFoundException("user not found"))
+        userDao.get(userId).orElseThrow(() -> new NotFoundException("user not found"))
                 .getFriends().add(friendId);
 
-        userInMemoryStorage.get(friendId).orElseThrow(() -> new NotFoundException("user friend not found")).
+        userDao.get(friendId).orElseThrow(() -> new NotFoundException("user friend not found")).
                 getFriends().add(userId);
     }
 
     public void removeFromFriendsList(Long userId, Long friendId) {
-        userInMemoryStorage.get(userId).orElseGet(() -> {
+        userDao.get(userId).orElseGet(() -> {
             throw new NotFoundException("user not found");
         }).getFriends().remove(friendId);
 
-        userInMemoryStorage.get(friendId).orElseGet(() -> {
+        userDao.get(friendId).orElseGet(() -> {
             throw new NotFoundException("user friend not found");
         }).getFriends().remove(userId);
     }
 
     public List<User> getCommonFriends(Long userId, Long friendId) {
 
-        if (!userInMemoryStorage.isContains(userId)) {
+        if (!userDao.isContains(userId)) {
             throw new NotFoundException("user not found");
         }
 
-        if (!userInMemoryStorage.isContains(friendId)) {
+        if (!userDao.isContains(friendId)) {
             throw new NotFoundException("user friend not found");
         }
 
-        List<Long> friendsIds =  userInMemoryStorage.get(userId).get().getFriends().stream()
+        List<Long> friendsIds =  userDao.get(userId).get().getFriends().stream()
                 .distinct()
-                .filter(userInMemoryStorage.get(friendId).get().getFriends()::contains)
+                .filter(userDao.get(friendId).get().getFriends()::contains)
                 .collect(Collectors.toList());
 
-        return userInMemoryStorage.getAll().stream()
+        return userDao.getAll().stream()
                 .filter(user -> friendsIds.stream()
                         .anyMatch(id -> id.equals(user.getId())))
                 .collect(Collectors.toList());
